@@ -9,57 +9,51 @@ const imagesList = [
 ];
 
 const maxSnakeLength = 5;
-const amplitude = 50;
-const speed = 0.05;
+const amplitude = 30;
+const speed = 2;
 const spinSpeed = 2;
+const snakeSpacing = 80;
 
 let snakes = [];
+
+const numRows = Math.ceil(window.innerHeight / snakeSpacing);
 
 function getRandomImage() {
   return imagesList[Math.floor(Math.random() * imagesList.length)];
 }
 
-function createSnake(direction, startX) {
+for (let row = 0; row < numRows; row++) {
+  const direction = row % 2 === 0 ? 1 : -1;
+  const startY = row * snakeSpacing + 20;
   const snake = [];
-  const spacing = 60;
-  const numImages = Math.floor(Math.random() * maxSnakeLength) + 1;
-
-  for (let i = 0; i < numImages; i++) {
+  for (let i = 0; i < maxSnakeLength; i++) {
     const img = document.createElement('img');
     img.src = getRandomImage();
     img.classList.add('snake-image');
-    img.style.top = `${i * spacing}px`;
-    img.style.left = `${startX}px`;
+    img.style.top = `${startY + Math.sin(i * 0.5) * amplitude}px`;
+    img.x = direction === 1 ? -i * 60 : window.innerWidth + i * 60;
     img.direction = direction;
-    img.phase = Math.random() * Math.PI * 2;
-    img.rotation = 0;
+    img.rotation = Math.random() * 360;
+    img.phase = i * 0.5;
     container.appendChild(img);
     snake.push(img);
   }
-
   snakes.push(snake);
 }
-
-createSnake(1, window.innerWidth * 0.25);
-createSnake(-1, window.innerWidth * 0.75);
 
 function animate() {
   snakes.forEach(snake => {
     snake.forEach((img, index) => {
-      let top = parseFloat(img.style.top);
-      top += 1;
-      if (top > window.innerHeight) top = -50;
-      img.style.top = `${top}px`;
-
-      img.phase += speed;
-      const wiggle = Math.sin(img.phase + index * 0.5) * amplitude * img.direction;
-      img.style.left = `${(window.innerWidth / 2) + wiggle}px`;
-
+      img.x += img.direction * speed;
+      if (img.direction === 1 && img.x > window.innerWidth + 50) img.x = -50;
+      if (img.direction === -1 && img.x < -50) img.x = window.innerWidth + 50;
+      const y = parseFloat(img.style.top) + Math.sin(img.phase) * amplitude;
+      img.style.top = `${y}px`;
+      img.phase += 0.05;
       img.rotation += spinSpeed;
-      img.style.transform = `rotate(${img.rotation}deg)`;
+      img.style.transform = `translateX(${img.x}px) rotate(${img.rotation}deg)`;
     });
   });
-
   requestAnimationFrame(animate);
 }
 
