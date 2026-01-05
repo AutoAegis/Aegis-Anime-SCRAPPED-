@@ -51,7 +51,6 @@ function animate() {
       else {
         const prev = snake[index - 1];
         img.x += (prev.x - img.x - img.direction * 60) * 0.1;
-        img.phase += 0.05;
       }
 
       if (img.direction === 1 && img.x > window.innerWidth + 50) img.x = -50;
@@ -60,6 +59,7 @@ function animate() {
       const y = img.yBase + Math.sin(img.phase) * amplitude;
       img.style.top = `${y}px`;
       img.style.transform = `translateX(${img.x}px) rotate(${img.rotation}deg)`;
+      img.phase += 0.05;
       img.rotation += spinSpeed;
     });
   });
