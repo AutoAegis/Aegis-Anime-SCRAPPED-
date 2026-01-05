@@ -14,6 +14,7 @@ const amplitude = 20;
 const speed = 2;
 const spinSpeed = 2;
 const rowSpacing = 120;
+const segmentSpacing = 60;
 
 let snakes = [];
 
@@ -27,7 +28,7 @@ function createSnake(yBase, direction) {
     const img = document.createElement('img');
     img.src = getRandomImage();
     img.classList.add('snake-image');
-    img.x = direction === 1 ? -i * 60 : window.innerWidth + i * 60;
+    img.x = direction === 1 ? -i * segmentSpacing : window.innerWidth + i * segmentSpacing;
     img.yBase = yBase;
     img.direction = direction;
     img.phase = i * 0.5;
@@ -39,7 +40,7 @@ function createSnake(yBase, direction) {
 }
 
 for (let i = 0; i < snakeCount; i++) {
-  const direction = i % 2 === 0 ? 1 : -1;
+  const direction = i % 2 === 0 ? 1 : -1; // alt dirrr
   const yBase = i * rowSpacing + 50;
   snakes.push(createSnake(yBase, direction));
 }
@@ -47,19 +48,20 @@ for (let i = 0; i < snakeCount; i++) {
 function animate() {
   snakes.forEach(snake => {
     snake.forEach((img, index) => {
-      if (index === 0) img.x += img.direction * speed;
-      else {
+      if (index === 0) {
+        img.x += img.direction * speed; // head movesssss
+      } else {
         const prev = snake[index - 1];
-        img.x += (prev.x - img.x - img.direction * 60) * 0.1;
+        img.x += (prev.x - img.x - img.direction * segmentSpacing) * 0.1; // follow headddd
+        img.phase += 0.05;
       }
 
-      if (img.direction === 1 && img.x > window.innerWidth + 50) img.x = -50;
-      if (img.direction === -1 && img.x < -50) img.x = window.innerWidth + 50;
+      if (img.direction === 1 && img.x > window.innerWidth + segmentSpacing) img.x = -segmentSpacing;
+      if (img.direction === -1 && img.x < -segmentSpacing) img.x = window.innerWidth + segmentSpacing;
 
       const y = img.yBase + Math.sin(img.phase) * amplitude;
       img.style.top = `${y}px`;
       img.style.transform = `translateX(${img.x}px) rotate(${img.rotation}deg)`;
-      img.phase += 0.05;
       img.rotation += spinSpeed;
     });
   });
